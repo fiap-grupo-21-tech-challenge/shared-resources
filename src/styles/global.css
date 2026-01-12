@@ -1,0 +1,76 @@
+:root {
+  --color-black: #030213;
+  --color-white: #FFFFFF;
+  --color-dark: #101828;
+  --color-gray: #E9EBEF;
+  --color-lightGray: #F9FAFB;
+  --color-darkGray: #E5E5E5;
+  --color-purple: #9810FA;
+  --color-red: #D4183D;
+  --color-green: #00A63E;
+  --color-blue: #165DFB;
+  --color-darkBlue: #1E2939;
+  --color-blueGray: #717182;
+  --color-backgroundGray: #f8fafc;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.button-primary {
+  color: var(--color-white);
+  background-color: var(--color-black);
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.button-secondary {
+  color: var(--color-black);
+  background-color: none;
+  border-width: thin;
+  border-color: var(--color-darkGray);
+  border-radius: 8px;
+  padding: 8px 24px;
+}
+
+.button-tertiary {
+  color: var(--color-black);
+  background-color: var(--color-white);
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.label {
+  display: block;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.custom-input {
+  width: 100%;
+  border-radius: 8px;
+  background-color: var(--color-backgroundGray);
+  padding: 8px;
+  font-size: 14px;
+}
+
+.custom-input:focus {
+  outline-width: 0;
+  border-width: 2px;
+  border-color: var(--color-gray);
+  padding: 8px;
+}
+
+/* .info-alert {
+    @apply rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 mt-6;
+  } */
