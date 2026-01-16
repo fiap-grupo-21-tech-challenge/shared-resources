@@ -10,29 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6.0.2
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
 
-    - name : "Configure AWS Credentials"
-      uses: aws-actions/configure-aws-credentials@v5.1.0
-      with: 
-       aws-region: us-east-1
-       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-       aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+      - name: "Configure AWS Credentials"
+        uses: aws-actions/configure-aws-credentials@v5.1.0
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
 
-    - name: Copy files to S3
-      run: |
-        aws s3 sync . s3://${{ secrets.BUCKET_NAME }}
+      - name: Install dependencies
+        run: |
+          npm install
 
-    - name: Invalidate cache CDN
-      run: |
-        aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_ID }} --paths "/*"
+      - name: Generete build file
+        run: |
+          npm run build
 
+      - name: Copy files to S3
+        run: |
+          aws s3 sync ./dist s3://${{ secrets.BUCKET_NAME }}
 
-
-
-
-
-
-
-      
+      - name: Invalidate cache CDN
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.CDN_ID }} --paths "/*"
