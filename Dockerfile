@@ -1,15 +1,42 @@
-FROM node:20-alpine
-
-# Instalamos um servidor estático simples do Node
-RUN npm install -g serve
-
+# Estágio 1: Dependências
+FROM node:18-alpine AS deps
 WORKDIR /app
+COPY package*.json ./
+RUN npm install
 
-# Copiamos o conteúdo da sua pasta src para dentro do container
-COPY ./src .
+# Estágio 2: Build
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
+# --- DEclaração dos Argumentos de Build ---
+ARG NEXT_PUBLIC_FIREBASE_API_KEY
+ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ARG NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ARG NEXT_PUBLIC_FIREBASE_MESSAGIN_SENDER_ID
+ARG NEXT_PUBLIC_FIREBASE_APP_ID
+
+# --- Transformação em Variáveis de Ambiente ---
+ENV NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID=$NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+ENV NEXT_PUBLIC_FIREBASE_MESSAGIN_SENDER_ID=$NEXT_PUBLIC_FIREBASE_MESSAGIN_SENDER_ID
+ENV NEXT_PUBLIC_FIREBASE_APP_ID=$NEXT_PUBLIC_FIREBASE_APP_ID
+
+RUN npm run build
+
+# Estágio 3: Runner (Imagem final)
+FROM node:18-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV production
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+RUN npm install -g serve
 EXPOSE 8080
-
-# -s: Single Page App mode (redireciona rotas para o index.html)
-# -l: Porta onde vai rodar
-CMD ["serve", "-s", ".", "-l", "8080"]
+CMD ["serve", "-s", "dist", "-l", "8080"]
