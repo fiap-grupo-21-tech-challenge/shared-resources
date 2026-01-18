@@ -18,30 +18,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { waitForAuth } from "./auth";
-
-export type TransactionType = "deposito" | "saque" | "transferencia";
-export type TransactionCategory =
-  | "salario"
-  | "moradia"
-  | "alimentacao"
-  | "saude"
-  | "investimento"
-  | "utilidades";
-
-export type TransactionInput = {
-  type: TransactionType;
-  value: number;
-  description: string;
-  category: TransactionCategory;
-  date?: Date;
-};
-
-export type Transaction = TransactionInput & {
-  id: string;
-  uid: string;
-  date: Date;
-  createdAt?: Date;
-};
+import { Transaction, TransactionInput } from "../models/transactions";
 
 async function requireUid(): Promise<string> {
   const userUid = await waitForAuth()
